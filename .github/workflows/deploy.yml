@@ -1,0 +1,26 @@
+name: Salesforce CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Runs when you push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛠 Install Salesforce CLI
+        run: npm install -g sfdx-cli
+
+      - name: 🔐 Authenticate Dev Hub
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL_DEVHUB }}" > authUrl.txt
+          sfdx force:auth:sfdxurl:store -f authUrl.txt -a DevHub
+
+      - name: 🚀 Deploy to Salesforce
+        run: |
+          sfdx force:source:deploy -p force-app -u DevHub --testlevel RunLocalTests
