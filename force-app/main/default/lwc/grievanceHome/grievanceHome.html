@@ -1,0 +1,30 @@
+<template>
+    <div class="banner">
+        <h1>Welcome to HR Grievance Portal</h1>
+        <p>Manage grievances efficiently and transparently.</p>
+    </div>
+
+    <div class="summary">
+        <lightning-card title="Open Cases" icon-name="utility:case">
+            <p class="count">{stats.open}</p>
+        </lightning-card>
+        <lightning-card title="Closed Cases" icon-name="utility:check">
+            <p class="count">{stats.closed}</p>
+        </lightning-card>
+        <lightning-card title="SLA Breached" icon-name="utility:warning">
+            <p class="count">{stats.slaBreached}</p>
+        </lightning-card>
+    </div>
+
+    <div class="chart">
+        <lightning-card title="Grievance Types">
+            <canvas style="width:100%; height:300px;"></canvas>
+        </lightning-card>
+    </div>
+
+    <div class="quick-actions">
+        <lightning-button>viewCases</lightning-button>
+       
+         <lightning-button>reports</lightning-button>
+    </div>
+</template>
