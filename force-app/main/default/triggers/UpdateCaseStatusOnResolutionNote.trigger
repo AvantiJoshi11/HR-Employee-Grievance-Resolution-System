@@ -3,7 +3,7 @@ trigger UpdateCaseStatusOnResolutionNote on Case (before update) {
         Case oldCase = Trigger.oldMap.get(c.Id);
         
         
-        if (c.Resolution_Note__c != null && c.Resolution_Note__c.toLowerCase().contains('closed the case')) {
+        if (c.Resolution_Note__c != null && c.Resolution_Note__c.toLowerCase().contains('closed')) {
             c.Status = 'Closed';
         }
     }
