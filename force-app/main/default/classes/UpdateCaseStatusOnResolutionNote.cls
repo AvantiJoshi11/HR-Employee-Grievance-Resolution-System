@@ -1,4 +1,3 @@
-
 @isTest
 public class UpdateCaseStatusOnResolutionNote {
  
@@ -35,5 +34,3 @@ public class UpdateCaseStatusOnResolutionNote {
  
   
 }
-
- 

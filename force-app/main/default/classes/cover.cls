@@ -1,4 +1,4 @@
- @isTest
+@isTest
 public class cover {
  
     @isTest
@@ -112,4 +112,3 @@ public class cover {
         Test.stopTest();
     }
 }
- 

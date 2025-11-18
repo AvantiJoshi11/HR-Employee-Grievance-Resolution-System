@@ -2,9 +2,9 @@ public with sharing class GrievanceController {
     @AuraEnabled(cacheable=true)
     public static Map<String, Integer> getCaseStats() {
         Map<String, Integer> stats = new Map<String, Integer>();
-        stats.put('open', [SELECT COUNT() FROM Case WHERE Status != 'Closed']);
-        stats.put('closed', [SELECT COUNT() FROM Case WHERE Status = 'Closed']);
-        stats.put('slaBreached', [SELECT COUNT() FROM Case WHERE SLA_Due_Date__c < TODAY AND Status != 'Closed']);
+        stats.put('open', (Integer)[SELECT COUNT() FROM Case WHERE Status != 'Closed']);
+        stats.put('closed', (Integer)[SELECT COUNT() FROM Case WHERE Status = 'Closed']);
+        stats.put('slaBreached', (Integer)[SELECT COUNT() FROM Case WHERE SLA_Due_Date__c < TODAY AND Status != 'Closed']);
         return stats;
     }
 
@@ -16,8 +16,8 @@ public with sharing class GrievanceController {
         ];
         for (AggregateResult ar : groupedResults) {
             Map<String, Object> row = new Map<String, Object>();
-            row.put('type', (String)ar.get('type'));
-            row.put('count', (Integer)ar.get('cnt'));
+            row.put('type', (String)ar.get('type') != null ? (String)ar.get('type') : 'Unknown');
+            row.put('count', ((Long)ar.get('cnt')).intValue());
             result.add(row);
         }
         return result;

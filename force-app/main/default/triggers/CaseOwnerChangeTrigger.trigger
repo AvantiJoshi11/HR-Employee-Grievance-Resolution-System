@@ -1,27 +1,32 @@
 trigger CaseOwnerChangeTrigger on Case (after update) {
-    List<Grievance_Action__c> actionsToInsert = new List<Grievance_Action__c>();
-
+    Set<Id> newOwnerIds = new Set<Id>();
     for (Case c : Trigger.new) {
         Case oldCase = Trigger.oldMap.get(c.Id);
+        if (c.OwnerId != oldCase.OwnerId && c.OwnerId != null) {
+            newOwnerIds.add(c.OwnerId);
+        }
+    }
 
-        
+    Map<Id, User> ownerMap = new Map<Id, User>();
+    if (!newOwnerIds.isEmpty()) {
+        ownerMap = new Map<Id, User>(
+            [SELECT Id, Name FROM User WHERE Id IN :newOwnerIds]
+        );
+    }
+
+    List<Grievance_Action__c> actionsToInsert = new List<Grievance_Action__c>();
+    for (Case c : Trigger.new) {
+        Case oldCase = Trigger.oldMap.get(c.Id);
         if (c.OwnerId != oldCase.OwnerId) {
-            
-            String newOwnerName = '';
-            if (c.OwnerId != null) {
-                User newOwner = [SELECT Name FROM User WHERE Id = :c.OwnerId LIMIT 1];
-                newOwnerName = newOwner.Name;
-            }
+            String newOwnerName = ownerMap.containsKey(c.OwnerId) ? ownerMap.get(c.OwnerId).Name : 'Unknown';
 
-            // Create GrievanceAction record
-            Grievance_Action__c action = new Grievance_Action__c();
-            action.Action_Type__c = 'Reassignment';
-            action.Name = c.subject;
-            action.Case__c = c.Id;
-            action.Action_Date__c = Date.today();
-            action.Notes__c = 'Case reassigned to ' + newOwnerName;
-
-            actionsToInsert.add(action);
+            actionsToInsert.add(new Grievance_Action__c(
+                Action_Type__c = 'Reassignment',
+                Name = c.Subject,
+                Case__c = c.Id,
+                Action_Date__c = Date.today(),
+                Notes__c = 'Case reassigned to ' + newOwnerName
+            ));
         }
     }
 
